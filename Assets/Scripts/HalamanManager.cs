@@ -10,7 +10,7 @@ public class HalamanManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -28,9 +28,24 @@ public class HalamanManager : MonoBehaviour
             }
          }   
     }
-    public void MulaiPermainan()
+    public void PilihLevel()
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Level");
+    }
+    public void LevelEasy()
+    {
+        SceneManager.LoadScene("Main");
+        BallController.maxScore = 5;
+    }
+    public void LevelMedium()
+    {
+        SceneManager.LoadScene("Main");
+        BallController.maxScore = 10;
+    }
+    public void LevelHard()
+    {
+        SceneManager.LoadScene("Main");
+        BallController.maxScore = 15;
     }
     public void KembaliKeMenu()
     {

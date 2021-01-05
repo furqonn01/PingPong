@@ -5,19 +5,24 @@ using UnityEngine.UI;
 
 public class BallController : MonoBehaviour
 {
+    public static int maxScore;
     public int force;
     Rigidbody2D rigid;
     int scoreP1;
     int scoreP2;
     Text scoreUIP1;
     Text scoreUIP2;
+    Text txPemenang;
+
     AudioSource audio;
     public AudioClip hitSound;
+
     GameObject panelSelesai;
-    Text txPemenang; 
     // Start is called before the first frame update
     void Start()
     {
+        GameObject gameObject = GameObject.Find("Music");
+        Destroy(gameObject);
         audio = GetComponent<AudioSource>();
         rigid = GetComponent<Rigidbody2D> ();
         Vector2 arah = new Vector2(2, 0).normalized;
@@ -45,7 +50,7 @@ public class BallController : MonoBehaviour
             ResetBall();
             Vector2 arah = new Vector2(2, 0).normalized;
             rigid.AddForce(arah * force);
-            if (scoreP1 == 5) 
+            if (scoreP1 == maxScore) 
             {
                 panelSelesai.SetActive (true);
                 txPemenang = GameObject.Find ("Pemenang").GetComponent<Text> ();
@@ -61,7 +66,7 @@ public class BallController : MonoBehaviour
             ResetBall();
             Vector2 arah = new Vector2(-2, 0).normalized;
             rigid.AddForce(arah * force);
-            if (scoreP2 == 5) 
+            if (scoreP2 == maxScore) 
             {
                 panelSelesai.SetActive (true);
                 txPemenang = GameObject.Find ("Pemenang").GetComponent<Text> ();
