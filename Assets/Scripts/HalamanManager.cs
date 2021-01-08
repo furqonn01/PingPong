@@ -34,21 +34,21 @@ public class HalamanManager : MonoBehaviour
     }
     public void LevelEasy()
     {
-        SceneManager.LoadScene("Main");
-        BallController.maxScore = 5;
+        SceneManager.LoadScene("Gameplay");
+        Score.maxScore = 5;
     }
     public void LevelMedium()
     {
-        SceneManager.LoadScene("Main");
-        BallController.maxScore = 10;
+        SceneManager.LoadScene("Gameplay");
+        Score.maxScore = 10;
     }
     public void LevelHard()
     {
-        SceneManager.LoadScene("Main");
-        BallController.maxScore = 15;
+        SceneManager.LoadScene("Gameplay");
+        Score.maxScore = 15;
     }
     public void KembaliKeMenu()
     {
-        SceneManager.LoadScene("Mulai");
+        SceneManager.LoadScene("Menu");
     }
 }

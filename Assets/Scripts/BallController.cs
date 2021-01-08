@@ -1,38 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BallController : MonoBehaviour
 {
-    public static int maxScore;
     public int force;
     Rigidbody2D rigid;
-    int scoreP1;
-    int scoreP2;
-    Text scoreUIP1;
-    Text scoreUIP2;
-    Text txPemenang;
 
     AudioSource audio;
     public AudioClip hitSound;
 
-    GameObject panelSelesai;
+    GameObject clone1, clone2;
     // Start is called before the first frame update
     void Start()
     {
-        GameObject gameObject = GameObject.Find("Music");
-        Destroy(gameObject);
         audio = GetComponent<AudioSource>();
-        rigid = GetComponent<Rigidbody2D> ();
-        Vector2 arah = new Vector2(2, 0).normalized;
+        rigid = GetComponent<Rigidbody2D>();
+
+        Vector2 arah = new Vector2(Arah.arah, 0).normalized;
         rigid.AddForce(arah * force);
-        scoreP1 = 0;
-        scoreP2 = 0;
-        scoreUIP1 = GameObject.Find ("Score1").GetComponent<Text>();
-        scoreUIP2 = GameObject.Find ("Score2").GetComponent<Text>();
-        panelSelesai = GameObject.Find ("PanelSelesai");
-        panelSelesai.SetActive (false); 
     }
 
     // Update is called once per frame
@@ -41,57 +27,74 @@ public class BallController : MonoBehaviour
         
     }
     private void OnCollisionEnter2D(Collision2D coll)
-        {
-            audio.PlayOneShot(hitSound);
-            if (coll.gameObject.name == "TepiKanan")
-        {
-            scoreP1 += 1;
-            TampilkanScore();
-            ResetBall();
-            Vector2 arah = new Vector2(2, 0).normalized;
-            rigid.AddForce(arah * force);
-            if (scoreP1 == maxScore) 
-            {
-                panelSelesai.SetActive (true);
-                txPemenang = GameObject.Find ("Pemenang").GetComponent<Text> ();
-                txPemenang.text = "Player Biru Pemenang!";
-                Destroy (gameObject);
-                return;
-            }
-        }
-        if (coll.gameObject.name == "TepiKiri")
-        {
-            scoreP2 += 1;
-            TampilkanScore();
-            ResetBall();
-            Vector2 arah = new Vector2(-2, 0).normalized;
-            rigid.AddForce(arah * force);
-            if (scoreP2 == maxScore) 
-            {
-                panelSelesai.SetActive (true);
-                txPemenang = GameObject.Find ("Pemenang").GetComponent<Text> ();
-                txPemenang.text = "Player Merah Pemenang!";
-                Destroy (gameObject);
-                return;
-            }
-        }
-        if (coll.gameObject.name == "Pemukul1" || coll.gameObject.name == "Pemukul2")
-        {
-            float sudut = (transform.position.y - coll.transform.position.y) * 5f;
-            Vector2 arah = new Vector2(rigid.velocity.x, sudut).normalized;
-            rigid.velocity = new Vector2(0, 0);
-            rigid.AddForce(arah * force * 2);
-        }
-    }
-    void ResetBall()
-    {
-        transform.localPosition = new Vector2(0, 0);
-        rigid.velocity = new Vector2(0, 0);
-    }
-    void TampilkanScore()
     {
-        Debug.Log("Score P1: " + scoreP1 + " Score P2: " + scoreP2);
-        scoreUIP1.text = scoreP1 + "";
-        scoreUIP2.text = scoreP2 + "";
+        if (coll.gameObject.name == "TepiKanan")
+        {
+            Score.scoreP1 += 1;
+            Score.HitungScore();
+            Score.TampilkanScore();
+            ResetBall();
+            Vector2 arah = new Vector2(2, 0).normalized;
+            rigid.AddForce(arah * force);
+        }
+        if (coll.gameObject.name == "TepiKiri")
+        {
+            Score.scoreP2 += 1;
+            Score.HitungScore();
+            Score.TampilkanScore();
+            ResetBall();
+            Vector2 arah = new Vector2(-2, 0).normalized;
+            rigid.AddForce(arah * force);
+        }
+        if (coll.gameObject.name == "Pemukul1")
+        {
+            audio.PlayOneShot(hitSound);
+            float sudut = (transform.position.y - coll.transform.position.y) * 5f;
+            Vector2 arah = new Vector2(rigid.velocity.x, sudut).normalized;
+            rigid.velocity = new Vector2(0, 0);
+            rigid.AddForce(arah * force * 2);
+            Arah.arah = 2;
+        }
+        if(coll.gameObject.name == "Pemukul2")
+        {
+            audio.PlayOneShot(hitSound);
+            float sudut = (transform.position.y - coll.transform.position.y) * 5f;
+            Vector2 arah = new Vector2(rigid.velocity.x, sudut).normalized;
+            rigid.velocity = new Vector2(0, 0);
+            rigid.AddForce(arah * force * 2);
+            Arah.arah = -2;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("powerup"))
+        {
+            clone1 = Instantiate(GameObject.FindGameObjectWithTag("bola"));
+            clone1.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+            clone1.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 5f).normalized * force);
+            clone2 = Instantiate(GameObject.FindGameObjectWithTag("bola"));
+            clone2.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+            clone2.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, -5f).normalized * force);
+
+            Destroy(GameObject.FindGameObjectWithTag("powerup"));
+            PowerupController.powerUpReady = false;
+            PowerupController.waktuTerakhir = Time.fixedTime;
+        }
+    }
+    void ResetBall()
+    {
+        if (GameObject.FindGameObjectsWithTag("bola").Length > 1)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(GameObject.FindGameObjectWithTag("powerup"));
+            PowerupController.powerUpReady = false;
+            PowerupController.waktuTerakhir = Time.fixedTime;
+
+            transform.localPosition = new Vector2(0, 0);
+            rigid.velocity = new Vector2(0, 0);
+        }
     }
 }
